@@ -33,33 +33,33 @@ public class Spawner : MonoBehaviour
 
     protected Enemy CreateFunc()
     {
-        Enemy cube = Instantiate(_prefab, transform);
+        Enemy enemy = Instantiate(_prefab, transform);
 
         
         
-        cube.Initialize(GetRandomPosition(), GetRandomDirection(), _enemyPool);
+        enemy.Initialize(GetRandomPosition(), GetRandomDirection(), _enemyPool);
 
-        Debug.Log($"CreateFunc {cube.GetInstanceID()}");
-        return cube;
+        Debug.Log($"CreateFunc {enemy.GetInstanceID()}");
+        return enemy;
     }
 
-    private void ActionOnGet(Enemy cube)
+    private void ActionOnGet(Enemy enemy)
     {
-        Debug.Log($"ActionOnGet {cube.GetInstanceID()}");
-        cube.Initialize(GetRandomPosition(), GetRandomDirection(), _enemyPool);
-        cube.gameObject.SetActive(true);
+        Debug.Log($"ActionOnGet {enemy.GetInstanceID()}");
+        enemy.Initialize(GetRandomPosition(), GetRandomDirection(), _enemyPool);
+        enemy.gameObject.SetActive(true);
     }
-    private void ActionOnRelease(Enemy cube)
+    private void ActionOnRelease(Enemy enemy)
     {
 
-        Debug.Log($"ActionOnRelease {cube.GetInstanceID()}");
-        cube.gameObject.SetActive(false);
+        Debug.Log($"ActionOnRelease {enemy.GetInstanceID()}");
+        enemy.gameObject.SetActive(false);
     }
-    private void ActionOnDestroy(Enemy cube)
+    private void ActionOnDestroy(Enemy enemy)
     {
 
-        Debug.Log($"ActionOnDestroy {cube.GetInstanceID()}");
-        Destroy(cube.gameObject);
+        Debug.Log($"ActionOnDestroy {enemy.GetInstanceID()}");
+        Destroy(enemy.gameObject);
     }
 
     private IEnumerator SpawnEnemies()
@@ -80,8 +80,8 @@ public class Spawner : MonoBehaviour
 
     private Vector3 GetRandomDirection()
     {
-        float xDirection = Random.Range(-1, 1);
-        float zDirection = Random.Range(-1, 1);
+        float xDirection = Random.Range(-1f, 1f);
+        float zDirection = Random.Range(-1f, 1f);
         return new Vector3(xDirection, 0, zDirection);
     }
 
