@@ -1,4 +1,5 @@
 using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Pool;
 
@@ -7,6 +8,7 @@ public class Spawner : MonoBehaviour
 {
     [SerializeField] private Enemy _prefab;
     [SerializeField] private float _spawnDelay = 2f;
+    [SerializeField] private List<Spawn> _spawns;
 
     private ObjectPool<Enemy> _enemyPool;
     private BoxCollider _spawnArea;
@@ -28,6 +30,12 @@ public class Spawner : MonoBehaviour
             maxSize: 100
         );
 
+        if (_spawns == null || _spawns.Count == 0)
+        {
+            Debug.LogError("Нет точек спавна");
+            return; 
+        }
+
         StartCoroutine(SpawnEnemies());
     }
 
@@ -37,7 +45,7 @@ public class Spawner : MonoBehaviour
 
         
         
-        enemy.Initialize(GetRandomPosition(), GetRandomDirection(), _enemyPool);
+        enemy.Initialize(GetRandomSpawnPosition(), GetRandomDirection(), _enemyPool);
 
         Debug.Log($"CreateFunc {enemy.GetInstanceID()}");
         return enemy;
@@ -46,7 +54,7 @@ public class Spawner : MonoBehaviour
     private void ActionOnGet(Enemy enemy)
     {
         Debug.Log($"ActionOnGet {enemy.GetInstanceID()}");
-        enemy.Initialize(GetRandomPosition(), GetRandomDirection(), _enemyPool);
+        enemy.Initialize(GetRandomSpawnPosition(), GetRandomDirection(), _enemyPool);
         enemy.gameObject.SetActive(true);
     }
     private void ActionOnRelease(Enemy enemy)
@@ -71,11 +79,11 @@ public class Spawner : MonoBehaviour
         }
     }
 
-    private Vector3 GetRandomPosition()
+    private Vector3 GetRandomSpawnPosition()
     {
-        float xPosition = Random.Range(_spawnArea.size.x / 2 * -1, _spawnArea.size.x / 2);
-        float zPosition = Random.Range(_spawnArea.size.z / 2 * -1, _spawnArea.size.z / 2);
-        return new Vector3(transform.position.x + xPosition, transform.position.y, transform.position.z + zPosition);
+        int spawnNumber = Random.Range(0, _spawns.Count);
+
+        return _spawns[spawnNumber].transform.position;
     }
 
     private Vector3 GetRandomDirection()
