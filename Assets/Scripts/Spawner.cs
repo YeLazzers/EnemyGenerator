@@ -3,20 +3,14 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Pool;
 
-[RequireComponent(typeof(BoxCollider))]
 public class Spawner : MonoBehaviour
 {
     [SerializeField] private Enemy _prefab;
     [SerializeField] private float _spawnDelay = 2f;
-    [SerializeField] private List<Spawn> _spawns;
+    [SerializeField] private List<SpawnSpot> _spawns;
 
     private ObjectPool<Enemy> _enemyPool;
-    private BoxCollider _spawnArea;
-
-    private void Awake()
-    {
-        _spawnArea = GetComponent<BoxCollider>();
-    }
+    private WaitForSeconds _wfsDelay;
 
     private void Start()
     {
@@ -30,12 +24,7 @@ public class Spawner : MonoBehaviour
             maxSize: 100
         );
 
-        if (_spawns == null || _spawns.Count == 0)
-        {
-            Debug.LogError("Нет точек спавна");
-            return; 
-        }
-
+        _wfsDelay = new WaitForSeconds(_spawnDelay);
         StartCoroutine(SpawnEnemies());
     }
 
@@ -43,30 +32,22 @@ public class Spawner : MonoBehaviour
     {
         Enemy enemy = Instantiate(_prefab, transform);
 
-        
-        
-        enemy.Initialize(GetRandomSpawnPosition(), GetRandomDirection(), _enemyPool);
+        enemy.Initialize(GetRandomSpawnPosition(), GetRandomDirection());
 
-        Debug.Log($"CreateFunc {enemy.GetInstanceID()}");
         return enemy;
     }
 
     private void ActionOnGet(Enemy enemy)
     {
-        Debug.Log($"ActionOnGet {enemy.GetInstanceID()}");
-        enemy.Initialize(GetRandomSpawnPosition(), GetRandomDirection(), _enemyPool);
+        enemy.Initialize(GetRandomSpawnPosition(), GetRandomDirection());
         enemy.gameObject.SetActive(true);
     }
     private void ActionOnRelease(Enemy enemy)
     {
-
-        Debug.Log($"ActionOnRelease {enemy.GetInstanceID()}");
         enemy.gameObject.SetActive(false);
     }
     private void ActionOnDestroy(Enemy enemy)
     {
-
-        Debug.Log($"ActionOnDestroy {enemy.GetInstanceID()}");
         Destroy(enemy.gameObject);
     }
 
@@ -74,7 +55,7 @@ public class Spawner : MonoBehaviour
     {
         while (enabled)
         {
-            yield return new WaitForSeconds(_spawnDelay);
+            yield return _wfsDelay;
             _enemyPool.Get();
         }
     }

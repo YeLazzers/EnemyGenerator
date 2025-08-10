@@ -5,13 +5,9 @@ using UnityEngine.Pool;
 public class Enemy : MonoBehaviour
 {
     [SerializeField] private float _speed;
-    
-    private IObjectPool<Enemy> _pool;
 
-    public void Initialize(Vector3 position, Vector3 direction, IObjectPool<Enemy> pool)
+    public void Initialize(Vector3 position, Vector3 direction)
     {
-        _pool = pool;
-
         transform.position = position;
         transform.LookAt(transform.position + direction);
     }
