@@ -19,7 +19,7 @@ public class FollowMover
         if (_target != null)
         {
             _characterTransform.LookAt(_target.transform.position);
-            _characterTransform.Translate(Vector3.forward * _movementSpeed * Time.deltaTime);
+            _characterTransform.position = Vector3.MoveTowards(_characterTransform.position, _target.transform.position,_movementSpeed * Time.deltaTime);
         }
     }
 }

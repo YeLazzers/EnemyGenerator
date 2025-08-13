@@ -24,9 +24,9 @@ public class Target : MonoBehaviour
     {
         transform.LookAt(nextPosition);
         
-        while ((transform.position - nextPosition).magnitude >= _reachDistance)
+        while (transform.position != nextPosition)
         {
-            transform.Translate(Vector3.forward * _speed * Time.deltaTime);
+            transform.position = Vector3.MoveTowards(transform.position, nextPosition, _speed * Time.deltaTime);
             yield return null;
         }
         _currentWaypointIndex++;
