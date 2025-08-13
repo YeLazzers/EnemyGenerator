@@ -1,29 +1,37 @@
-using System.Collections;
 using UnityEngine;
-using UnityEngine.Pool;
+using UnityEngine.Events;
 
 public class Enemy : MonoBehaviour
 {
+    private FollowMover _followMover;
+
     [SerializeField] private float _speed;
 
-    public void Initialize(Vector3 position, Vector3 direction)
+    public UnityAction<Enemy> TargetReached;
+
+    private void Awake()
     {
-        transform.position = position;
-        transform.LookAt(transform.position + direction);
+        _followMover = new FollowMover(this.transform, _speed);
     }
 
-    private void Start()
+    private void Update()
     {
-        StartCoroutine(MoveForward());
+        _followMover.Update(Time.deltaTime);
     }
 
-    public IEnumerator MoveForward()
+    private void OnCollisionEnter(Collision collision)
     {
-        while(enabled)
+        if (collision.collider.TryGetComponent(out Target target))
         {
-            transform.Translate(Vector3.forward * _speed * Time.deltaTime);
-
-            yield return null;
+            TargetReached?.Invoke(this);
         }
+    }
+
+
+    public Enemy Initialize(Target target)
+    {
+        _followMover.SetTarget(target);
+
+        return this;
     }
 }
